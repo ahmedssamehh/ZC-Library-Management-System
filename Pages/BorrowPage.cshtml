@@ -1,0 +1,176 @@
+@page
+@model LibraryManagementSystem.Pages.BorrowPageModel
+@{
+    ViewData["Title"] = "Borrow Page";
+    Layout = null;
+}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Borrow Page</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.0/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="~/css/adminstyle.css" />
+    <link rel="stylesheet" href="~/css/borrowing.css" />
+    <link rel="stylesheet" href="~/css/Navbar.css" />
+    <link rel="stylesheet" href="~/css/Table.css" />
+
+    <link rel="stylesheet" href="~/css/Button.css"/>
+    
+</head>
+<body>
+    <div class="navbar-container">
+        <div class="navbar">
+            <img src="~/images/ZewailCityLogo.png" class="img img-responsive img-circle center-block" alt="Logo">
+            <div class="navbar-btns">
+                <form method="post" asp-page-handler="HomePagePost">
+                    <button class="navbar-btn">Home Page</button>
+                </form>
+                 <form>
+                    <button class="navbar-btn"> Borrowed Books </button>
+                </form>
+                <form method="post" asp-page-handler="ReturnedBooksPost">
+                    <button class="navbar-btn">Returned Books</button>
+                </form>
+                <form method="post" asp-page-handler="LostBooksPost">
+                    <button class="navbar-btn">Lost Books</button>
+                </form>
+                <a class="navbar-btn" href="/">Back to Login</a>
+                <h6 style="position: absolute; right: -170px; font-weight: bold;">Today's Date:</h6>
+                <div id="current_date" style="position: absolute; right: -250px;">
+                    <script>
+                        date = new Date();
+                        year = date.getFullYear();
+                        month = date.getMonth() + 1;
+                        day = date.getDate();
+                        document.getElementById("current_date").innerHTML = month + "/" + day + "/" + year;
+                    </script>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="container">
+        
+        <form id="borrowBookForm" method="post" enctype="multipart/form-data" asp-page-handler="BorrowBook">
+            <div class="form-group">
+                <label for="bookId">Book ID*</label>
+                <select id="bookId" name="bookId" class="form-control" required>
+                    @await Model.LoadBooksAsync()
+                    @foreach (var book in Model.Books)
+                    {
+                        <option value="@book.Id">@book.Id - @book.Title</option>
+                    }
+                </select>
+
+            </div>
+            <div class="form-group">
+                <label for="studentName">Student Name*</label>
+                <input type="text" id="studentName" name="studentName" class="form-control" required>
+            </div>
+            <div class="form-group">
+                <label for="studentId">Student ID*</label>
+                <input type="text" id="studentId" name="studentId" class="form-control" required>
+            </div>
+            <div class="form-group">
+                <label for="studentEmail">Student Email*</label>
+                <input type="email" id="studentEmail" name="studentEmail" class="form-control" required>
+            </div>
+            <div class="form-group">
+                <label for="borrowDate">Borrow Date*</label>
+                <input type="date" id="borrowDate" name="borrowDate" class="form-control" required>
+            </div>
+            <div class="form-group">
+                <label for="returnDate">Return Date*</label>
+                <input type="date" id="returnDate" name="returnDate" class="form-control" required>
+            </div>
+            <div class="button-container">
+                <button class="button-64" type="submit" role="button">
+                    <span class="text">Add Borrowed Book</span>
+                </button>
+            </div>
+        </form>
+        <div class="spacer"></div>
+        <table class="table-fill">
+            <thead>
+                <tr>
+                    <th>Borrowing Id</th>
+                    <th>Book ID</th>
+                    <th>Student Name</th>
+                    <th>Student ID</th>
+                    <th>Student Email</th>
+                    <th>Borrow Date</th>
+                    <th>Return Date</th>
+                    <th>Actions</th>
+
+                </tr>
+            </thead>
+            <tbody class="table-hover">
+                
+                @foreach (var borrowing in Model.Borrowings)
+                {
+                    <tr>
+                        <td class="text-left">@borrowing.BorrowingId</td>
+                        <td class="text-left">@borrowing.BookId</td>
+                        <td class="text-left">@borrowing.StudentName</td>
+                        <td class="text-left">@borrowing.StudentId</td>
+                        <td class="text-left">@borrowing.StudentEmail</td>
+                        <td class="text-left">@borrowing.BorrowDate.ToShortDateString()</td>
+                        <td class="text-left">@borrowing.ReturnDate.ToShortDateString()</td>
+                        <td class="text-left">
+                            <div style="display: flex; gap: 10px;">
+                            <form method="post" asp-page-handler="ReturnedBook">
+                                <input type="hidden" name="borrowingId" value="@borrowing.BorrowingId" />
+                                <input type="hidden" name="bookId" value="@borrowing.BookId" />
+                                <input type="hidden" name="studentName" value="@borrowing.StudentName" />
+                                <input type="hidden" name="studentId" value="@borrowing.StudentId" />
+                                <input type="hidden" name="returnDate" value="@borrowing.ReturnDate.ToString("yyyy-MM-dd")" />
+                                <button type="submit" class="btn-returned">Returned</button>
+                            </form>
+                            <form method="post" asp-page-handler="LostBook">
+                                <input type="hidden" name="borrowingId" value="@borrowing.BorrowingId" />
+                                <input type="hidden" name="bookId" value="@borrowing.BookId" />
+                                <input type="hidden" name="studentName" value="@borrowing.StudentName" />
+                                <input type="hidden" name="studentId" value="@borrowing.StudentId" />
+                                <button class="btn-lost">Lost</button>
+                            </form>
+                            </div>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+    <style>
+            .table-fill {
+    background: white;
+    border-radius: 3px;
+    border-collapse: collapse;
+    height: 240px;
+    margin: auto;
+    max-width: 400px; 
+    padding: 5px; 
+    width: 100%;
+    box-shadow: 0 5px 10px rgba(0, 0, 0, 0.1);
+    animation: float 5s infinite;
+    }
+    .button-container {
+    display: flex;
+    justify-content: center;
+    align-items: center; 
+    margin-top: 20px; 
+}
+
+
+    th,
+    td {
+    font-size: 14px;
+    }
+
+    </style>
+    <script src="https://code.jquery.com/jquery-1.11.1.min.js"></script>
+
+</body>
+</html>

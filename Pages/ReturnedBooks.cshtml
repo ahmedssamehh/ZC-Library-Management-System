@@ -1,0 +1,87 @@
+@page
+@model LibraryManagementSystem.Pages.ReturnedBooksModel
+@{
+    ViewData["Title"] = "ReturnedBooks";
+    Layout = null;
+}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.0/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="~/css/adminstyle.css" />
+    <link rel="stylesheet" href="~/css/borrowing.css" />
+    <link rel="stylesheet" href="~/css/Navbar.css" />  
+    <link rel="stylesheet" href="~/css/Button.css"/> 
+    <link rel="stylesheet" href="~/css/Table.css" />  
+
+    <title> Returned Books</title>
+  
+</head>
+<body>
+    <div class="navbar-container">
+    <div class="navbar">
+        <img src="~/images/ZewailCityLogo.png"  class="img img-responsive img-circle center-block" alt="Logo"> 
+        <div class="navbar-btns">
+            <form method="post" asp-page-handler="HomePagePost">
+                <button class="navbar-btn">Home Page</button>
+            </form>
+            <form method="post" asp-page-handler="BorrowPagePost">
+                <button class="navbar-btn"> Borrowed Books </button>
+            </form>
+            <button class="navbar-btn"> Returned Books </button>
+            <form method="post" asp-page-handler="LostBooksPost">
+                <button class="navbar-btn"> Lost Books </button>
+            </form>
+            <a  class="navbar-btn" href="/">Back to Login</a>
+            <h6 style="position: absolute; right: -170px; font-weight: bold;"> Today's Date: </h6>
+                <div id="current_date" style="position: absolute; right: -250px; ">
+                    <script>
+                        date = new Date();
+                        year = date.getFullYear();
+                        month = date.getMonth() + 1;
+                        day = date.getDate();
+                        document.getElementById("current_date").innerHTML = month + "/" + day + "/" + year;
+                    </script>
+                </div>
+        </div>
+    </div>
+    </div>
+
+        <table class="table-fill">
+            <thead>
+                <tr>
+                    <th>Return Id</th>
+                    <th>Borrowing Id</th>
+                    <th>Book Id</th>
+                    <th>Student Name</th>
+                    <th>Student Id</th>
+                    <th>Return Date</th>
+                    <th> Action </th>
+                </tr>
+            </thead>
+            <tbody class="table-hover">
+                @foreach (var returned in Model.Returneds)
+                {
+                <tr>
+                    <td class="text-left"> @returned.ReturnId </td>
+                    <td class="text-left"> @returned.BorrowingId</td>
+                    <td class="text-left"> @returned.BookId</td>
+                    <td class="text-left"> @returned.StudentName</td>
+                    <td class="text-left"> @returned.StudentId</td>
+                    <td class="text-left"> @returned.ReturnDate.ToShortDateString()</td>
+                    <td class="text-left">
+                    <form method="post" asp-page-handler="DeleteBook" style="display:inline;">
+                    <input type="hidden" name="id" value="@returned.ReturnId" />
+                    <button type="submit" class="btn-lost">Delete</button>
+                    </form>
+                    </td>
+                </tr>
+                }
+
+
+            </tbody>
+        </table>
+</body>
+</html>
