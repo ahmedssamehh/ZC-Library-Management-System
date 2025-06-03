@@ -30,7 +30,7 @@ This is a simple Library Management System built using ASP.NET Core Razor Pages.
 
 ## Contributors
 
-- [Yehia Hesham](https://github.com/yehiahesham2938)
+- [Ahmed Sameh](https://github.com/ahmedssamehh)
 
 ## Project Information
 
